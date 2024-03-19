@@ -1,0 +1,13 @@
+{
+    "Realtime Currency Exchange Rate": {
+        "1. From_Currency Code": "EUR",
+        "2. From_Currency Name": "Euro",
+        "3. To_Currency Code": "HUF",
+        "4. To_Currency Name": "Hungarian Forint",
+        "5. Exchange Rate": "393.50000000",
+        "6. Last Refreshed": "2024-03-10 18:48:23",
+        "7. Time Zone": "UTC",
+        "8. Bid Price": "393.49000000",
+        "9. Ask Price": "393.51000000"
+    }
+}
