@@ -1,11 +1,10 @@
 import XCTest
-
 import Alamofire
 import Mocker
 
 @testable import AlphaSwiftage
 
-final class AlphaSwiftageTests: XCTestCase {
+final class AlphaVantageServiceTests: XCTestCase {
     private let apiKey = "whatever"
     
     func testQuote() async throws {
@@ -25,10 +24,10 @@ final class AlphaSwiftageTests: XCTestCase {
         given(response: .quote, for: "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=\(symbol)&apikey=\(apiKey)")
         
         // When
-        let quote = try await service.quote(for: symbol)
+        let result = try await service.quote(for: symbol)
         
         // Then
-        XCTAssertEqual(quote, expectedQuote)
+        assertSuccess(result, expectedValue: expectedQuote)
     }
     
     func testCurrencyExchangeRate() async throws {
@@ -48,13 +47,13 @@ final class AlphaSwiftageTests: XCTestCase {
         given(response: .currencyExchangeRate, for: "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=\(base)&to_currency=\(target)&apikey=\(apiKey)")
         
         // When
-        let rate = try await service.currencyExchangeRate(from: base, to: target)
+        let result = try await service.currencyExchangeRate(from: base, to: target)
         
         // Then
-        XCTAssertEqual(rate, expectedRate)
+        assertSuccess(result, expectedValue: expectedRate)
     }
     
-    func testSymbolSearch() async throws {
+    func testSymbolSearchSuccess() async throws {
         // Given
         let keyword = "vwce"
         let expectedSymbol = Symbol(symbol: "VWCE.DEX",
@@ -67,14 +66,37 @@ final class AlphaSwiftageTests: XCTestCase {
                                     currency: "EUR",
                                     matchScore: 0.7273)
         let service = givenService()
-        given(response: .symbolSearch, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
+        given(response: .symbolSearchSuccess, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
         
         // When
-        let symbols = try await service.symbolSearch(keywords: keyword)
+        let result = try await service.symbolSearch(keywords: keyword)
         
         // Then
-        XCTAssertEqual(symbols.count, 2)
-        XCTAssertEqual(symbols[1], expectedSymbol)
+        assertSuccess(result, expectedValue: [expectedSymbol])
+    }
+    
+    func testSymbolSearchFailure() async throws {
+        // Given
+        let expectedError = AlphaVantageAPIError(message: "Invalid API call.")
+        let keyword = "whatever"
+        let service = givenService()
+        given(response: .symbolSearchFailure, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
+        
+        // When
+        let result = try await service.symbolSearch(keywords: keyword)
+        
+        // Then
+        switch result {
+        case .success:
+            XCTFail("Expected error but got success!")
+        case .failure(let error):
+            switch error {
+            case .apiError(let apiError):
+                XCTAssertEqual(apiError, expectedError)
+            case .unknown(let error):
+                XCTFail("Expected apiError but got: \(error.localizedDescription)")
+            }
+        }
     }
     
     private func given(response: MockResponse, for url: String) {
@@ -88,34 +110,13 @@ final class AlphaSwiftageTests: XCTestCase {
         
         return AlphaVantageService(apiKey: "whatever", session: sessionManager)
     }
-}
-
-enum MockResponse: String {
-    case quote = "mockQuoteResponse"
-    case currencyExchangeRate = "mockCurrencyExchangeRateeResponse"
-    case symbolSearch = "mockSymbolSearch"
     
-    var resourcePath: URL {
-        return Bundle.test.url(forResource: "Resources/\(rawValue)", withExtension: "json")!
-    }
-}
-
-extension Mock {
-    init(url: URL, response: MockResponse) {
-        self.init(url: url,
-                  contentType: .json,
-                  statusCode: 200,
-                  data: [
-                    .get : try! Data(contentsOf: response.resourcePath)
-                  ])
-    }
-}
-
-extension Bundle {
-    static var test: Bundle {
-        let url = Bundle.module.bundleURL
-            .deletingLastPathComponent()
-            .appending(path: "AlphaSwiftage_AlphaSwiftageTests.bundle")
-        return Bundle(url: url)!
+    private func assertSuccess<T>(_ result: Result<T, AlphaVantageError>, expectedValue: T) where T: Equatable {
+        switch result {
+        case .success(let actualValue):
+            XCTAssertEqual(actualValue, expectedValue)
+        case .failure(let error):
+            XCTFail("Expected success but got error: \(error)")
+        }
     }
 }
