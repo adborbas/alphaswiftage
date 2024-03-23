@@ -1,17 +1,6 @@
 {
     "bestMatches": [
         {
-            "1. symbol": "VWCE.FRK",
-            "2. name": "Vanguard FTSE All-World UCITS ETF USD Accumulation",
-            "3. type": "ETF",
-            "4. region": "Frankfurt",
-            "5. marketOpen": "08:00",
-            "6. marketClose": "20:00",
-            "7. timezone": "UTC+02",
-            "8. currency": "EUR",
-            "9. matchScore": "0.8000"
-        },
-        {
             "1. symbol": "VWCE.DEX",
             "2. name": "Vanguard FTSE All-World UCITS ETF USD Accumulation",
             "3. type": "ETF",
