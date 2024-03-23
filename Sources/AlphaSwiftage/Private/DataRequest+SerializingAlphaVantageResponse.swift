@@ -18,7 +18,7 @@ extension DataRequest {
         }
     }
     
-    func serializingAlphaVantageWrappedResponse<Wrapper, T>(_ type: Wrapper.Type,_ unwrap: (Wrapper) -> T) async -> Result<T, AlphaVantageError> where Wrapper: Decodable {
+    func serializingAlphaVantageWrappedResponse<Wrapper, T>(_ type: Wrapper.Type, _ unwrap: (Wrapper) -> T) async -> Result<T, AlphaVantageError> where Wrapper: Decodable {
         let wrappedResult: Result<Wrapper, AlphaVantageError> = await self.serializingAlphaVantageResponse()
         
         switch wrappedResult {
