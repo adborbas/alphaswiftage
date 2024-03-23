@@ -14,21 +14,21 @@ public class AlphaVantageService {
         self.session = session
     }
     
-    public func quote(for symbol: String) async throws -> Result<Quote, AlphaVantageError>  {
+    public func quote(for symbol: String) async -> Result<Quote, AlphaVantageError>  {
         let request = AlphaVantageAPI.globalQuote(symbol: symbol, apiKey: apiKey)
         
         return await session.request(request)
             .serializingAlphaVantageWrappedResponse(QuoteResponse.self) { $0.quote }
     }
     
-    public func currencyExchangeRate(from base: String, to target: String) async throws -> Result<CurrencyExchangeRate, AlphaVantageError>  {
+    public func currencyExchangeRate(from base: String, to target: String) async -> Result<CurrencyExchangeRate, AlphaVantageError>  {
         let request = AlphaVantageAPI.currencyExchangeRate(from: base, to: target, apiKey: apiKey)
         
         return await session.request(request)
             .serializingAlphaVantageWrappedResponse(CurrencyExchangeRateResponse.self) { $0.exchangeRate }
     }
     
-    public func symbolSearch(keywords: String) async throws -> Result<[Symbol], AlphaVantageError> {
+    public func symbolSearch(keywords: String) async -> Result<[Symbol], AlphaVantageError> {
         let request = AlphaVantageAPI.symbolSearch(keywords: keywords, apiKey: apiKey)
         return await session.request(request)
             .serializingAlphaVantageWrappedResponse(SearchSymbolResponse.self) { $0.matches }
