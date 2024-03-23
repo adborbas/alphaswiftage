@@ -7,7 +7,7 @@ import Mocker
 final class AlphaVantageServiceTests: XCTestCase {
     private let apiKey = "whatever"
     
-    func testQuote() async throws {
+    func testQuote() async {
         // Given
         let service = givenService()
         let symbol = "VWCE.DEX"
@@ -24,13 +24,13 @@ final class AlphaVantageServiceTests: XCTestCase {
         given(response: .quote, for: "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=\(symbol)&apikey=\(apiKey)")
         
         // When
-        let result = try await service.quote(for: symbol)
+        let result = await service.quote(for: symbol)
         
         // Then
         assertSuccess(result, expectedValue: expectedQuote)
     }
     
-    func testCurrencyExchangeRate() async throws {
+    func testCurrencyExchangeRate() async {
         // Given
         let service = givenService()
         let base = "EUR"
@@ -47,13 +47,13 @@ final class AlphaVantageServiceTests: XCTestCase {
         given(response: .currencyExchangeRate, for: "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=\(base)&to_currency=\(target)&apikey=\(apiKey)")
         
         // When
-        let result = try await service.currencyExchangeRate(from: base, to: target)
+        let result = await service.currencyExchangeRate(from: base, to: target)
         
         // Then
         assertSuccess(result, expectedValue: expectedRate)
     }
     
-    func testSymbolSearchSuccess() async throws {
+    func testSymbolSearchSuccess() async {
         // Given
         let keyword = "vwce"
         let expectedSymbol = Symbol(symbol: "VWCE.DEX",
@@ -69,13 +69,13 @@ final class AlphaVantageServiceTests: XCTestCase {
         given(response: .symbolSearchSuccess, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
         
         // When
-        let result = try await service.symbolSearch(keywords: keyword)
+        let result = await service.symbolSearch(keywords: keyword)
         
         // Then
         assertSuccess(result, expectedValue: [expectedSymbol])
     }
     
-    func testSymbolSearchFailure() async throws {
+    func testSymbolSearchFailure() async {
         // Given
         let expectedError = AlphaVantageAPIError(message: "Invalid API call.")
         let keyword = "whatever"
@@ -83,7 +83,7 @@ final class AlphaVantageServiceTests: XCTestCase {
         given(response: .symbolSearchFailure, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
         
         // When
-        let result = try await service.symbolSearch(keywords: keyword)
+        let result = await service.symbolSearch(keywords: keyword)
         
         // Then
         switch result {
