@@ -9,6 +9,7 @@ import Foundation
 
 public enum AlphaVantageError: Error {
     case apiError(AlphaVantageAPIError)
+    case unexpectedResponse(String)
     case unknown(Error)
 }
 

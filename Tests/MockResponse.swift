@@ -13,6 +13,7 @@ enum MockResponse: String {
     case currencyExchangeRate = "mockCurrencyExchangeRateeResponse"
     case symbolSearchSuccess = "mockSymbolSearchSuccess"
     case symbolSearchFailure = "mockSymbolSearchFailure"
+    case unexpectedResponse = "mockUnexpectedResponse"
     
     var resourcePath: URL {
         return Bundle.test.url(forResource: "Resources/\(rawValue)", withExtension: "json")!

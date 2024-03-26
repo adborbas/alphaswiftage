@@ -77,7 +77,7 @@ final class AlphaVantageServiceTests: XCTestCase {
     
     func testSymbolSearchFailure() async {
         // Given
-        let expectedError = AlphaVantageAPIError(message: "Invalid API call.")
+        let expectedError: AlphaVantageError = .apiError(AlphaVantageAPIError(message: "Invalid API call."))
         let keyword = "whatever"
         let service = givenService()
         given(response: .symbolSearchFailure, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
@@ -86,17 +86,20 @@ final class AlphaVantageServiceTests: XCTestCase {
         let result = await service.symbolSearch(keywords: keyword)
         
         // Then
-        switch result {
-        case .success:
-            XCTFail("Expected error but got success!")
-        case .failure(let error):
-            switch error {
-            case .apiError(let apiError):
-                XCTAssertEqual(apiError, expectedError)
-            case .unknown(let error):
-                XCTFail("Expected apiError but got: \(error.localizedDescription)")
-            }
-        }
+        await assertError(result, expectedError: expectedError)
+    }
+    
+    func test_unexpectedResponse() async {
+        // Given
+        let symbol = "vwce"
+        let service = givenService()
+        given(response: .unexpectedResponse, for: "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=\(symbol)&apikey=\(apiKey)")
+        
+        // When
+        let result = await service.quote(for: symbol)
+        
+        // Then
+        await assertError(result, expectedError: .unexpectedResponse("{\n    \"this\": [\"is\", \"unexpected\"]\n}\n"))
     }
     
     private func given(response: MockResponse, for url: String) {
@@ -117,6 +120,30 @@ final class AlphaVantageServiceTests: XCTestCase {
             XCTAssertEqual(actualValue, expectedValue)
         case .failure(let error):
             XCTFail("Expected success but got error: \(error)")
+        }
+    }
+    
+    private func assertError<T>(_ result: Result<T, AlphaVantageError>, expectedError: AlphaVantageError) async {
+        switch result {
+        case .success:
+            XCTFail("Expected error but got success!")
+        case .failure(let error):
+            XCTAssertEqual(error, expectedError, "Expected \(expectedError) but got: \(error)")
+        }
+    }
+}
+
+extension AlphaVantageError: Equatable {
+    public static func == (lhs: AlphaVantageError, rhs: AlphaVantageError) -> Bool {
+        switch (lhs, rhs) {
+        case (.apiError(let lhsError), .apiError(let rhsError)):
+            return lhsError == rhsError
+        case (.unexpectedResponse(let lhsResponse), .unexpectedResponse(let rhsResponse)):
+            return lhsResponse == rhsResponse
+        case (.unknown(let lhsError), .unknown(let rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
         }
     }
 }
