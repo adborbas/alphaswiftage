@@ -17,8 +17,15 @@ struct AlphaVantageResponseSerializer<T: Decodable>: ResponseSerializer {
             return .success(result)
         } catch {
             if let data = data {
-                let error = try! JSONDecoder().decode(AlphaVantageAPIError.self, from: data)
-                return .failure(.apiError(error))
+                do {
+                    let error = try JSONDecoder().decode(AlphaVantageAPIError.self, from: data)
+                    return .failure(.apiError(error))
+                } catch {
+                    if let response = String(data: data, encoding: .utf8) {
+                        return .failure(.unexpectedResponse(response))
+                    }
+                    return .failure(.unknown(error))
+                }
             }
             
             return .failure(.unknown(error))
