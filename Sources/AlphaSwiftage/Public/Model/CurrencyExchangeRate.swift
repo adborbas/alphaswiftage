@@ -41,9 +41,9 @@ public struct CurrencyExchangeRate: Codable, Equatable {
         fromCurrencyName = try container.decode(String.self, forKey: .fromCurrencyName)
         toCurrencyCode = try container.decode(String.self, forKey: .toCurrencyCode)
         toCurrencyName = try container.decode(String.self, forKey: .toCurrencyName)
-        exchangeRate = try container.decodeDecimal(forKey: .exchangeRate)
-        bidPrice = try container.decodeDecimal(forKey: .bidPrice)
-        askPrice = try container.decodeDecimal(forKey: .askPrice)
+        exchangeRate = try container.decodeUSDecimal(forKey: .exchangeRate)
+        bidPrice = try container.decodeUSDecimal(forKey: .bidPrice)
+        askPrice = try container.decodeUSDecimal(forKey: .askPrice)
         
 
         // Handling TimeZone

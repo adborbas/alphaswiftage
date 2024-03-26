@@ -41,13 +41,13 @@ public struct Quote: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         symbol = try container.decode(String.self, forKey: .symbol)
-        open = try container.decodeDecimal(forKey: .open)
-        high = try container.decodeDecimal(forKey: .high)
-        low = try container.decodeDecimal(forKey: .low)
-        price = try container.decodeDecimal(forKey: .price)
-        volume = try container.decodeInt(forKey: .volume)
-        previousClose = try container.decodeDecimal(forKey: .previousClose)
-        change = try container.decodeDecimal(forKey: .change)
+        open = try container.decodeUSDecimal(forKey: .open)
+        high = try container.decodeUSDecimal(forKey: .high)
+        low = try container.decodeUSDecimal(forKey: .low)
+        price = try container.decodeUSDecimal(forKey: .price)
+        volume = try container.decodeUSInt(forKey: .volume)
+        previousClose = try container.decodeUSDecimal(forKey: .previousClose)
+        change = try container.decodeUSDecimal(forKey: .change)
         changePercent = try container.decode(String.self, forKey: .changePercent)
 
         let dateString = try container.decode(String.self, forKey: .latestTradingDay)
@@ -58,23 +58,5 @@ public struct Quote: Codable, Equatable {
             throw DecodingError.dataCorruptedError(forKey: .latestTradingDay, in: container, debugDescription: "Date string does not match format expected by formatter.")
         }
         latestTradingDay = date
-    }
-}
-
-extension KeyedDecodingContainer {
-    func decodeDecimal(forKey key: K) throws -> Decimal {
-        let stringValue = try decode(String.self, forKey: key)
-        guard let decimalValue = Decimal(string: stringValue) else {
-            throw DecodingError.dataCorruptedError(forKey: key, in: self, debugDescription: "Expected string to be convertible to Decimal")
-        }
-        return decimalValue
-    }
-    
-    func decodeInt(forKey key: K) throws -> Int {
-        let stringValue = try decode(String.self, forKey: key)
-        guard let decimalValue = Int(stringValue) else {
-            throw DecodingError.dataCorruptedError(forKey: key, in: self, debugDescription: "Expected string to be convertible to Int")
-        }
-        return decimalValue
     }
 }

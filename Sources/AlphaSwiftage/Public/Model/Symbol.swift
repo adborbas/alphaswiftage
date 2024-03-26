@@ -39,11 +39,7 @@ public struct Symbol: Codable, Equatable {
         marketOpen = try container.decode(String.self, forKey: .marketOpen)
         marketClose = try container.decode(String.self, forKey: .marketClose)
         currency = try container.decode(String.self, forKey: .currency)
-        let rawMatchScore = try container.decode(String.self, forKey: .matchScore)
-        guard let matchScore = Float(rawMatchScore) else {
-            throw DecodingError.dataCorruptedError(forKey: .matchScore, in: container, debugDescription: "Match score string is not a valid float.")
-        }
-        self.matchScore = matchScore
+        self.matchScore = try container.decodeUSFloat(forKey: .matchScore)
 
         // Handling TimeZone
         let timeZoneString = try container.decode(String.self, forKey: .timeZone)
