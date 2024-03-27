@@ -17,14 +17,14 @@ struct AlphaVantageResponseSerializer<T: Decodable>: ResponseSerializer {
             return .success(result)
         } catch {
             guard let data = data else {
-                logger.error("Failed to serialise request and returned data is nil. \(error.localizedDescription)")
+                logger.error("Failed to serialise response and returned data is nil. \(String(describing: error))")
                 return .failure(.unknown(error))
             }
             
-            logger.debug("Failed to serialise request: \(error.localizedDescription).")
+            logger.debug("Failed to serialise response: \(String(describing: error)).")
             do {
                 let error = try JSONDecoder().decode(AlphaVantageAPIError.self, from: data)
-                logger.info("API Error: \(error.localizedDescription)")
+                logger.info("API Error: \(String(describing: error))")
                 return .failure(.apiError(error))
             } catch {
                 guard let response = String(data: data, encoding: .utf8) else {

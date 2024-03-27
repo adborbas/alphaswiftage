@@ -14,7 +14,7 @@ public struct Symbol: Codable, Equatable {
     public let region: String
     public let marketOpen: String
     public let marketClose: String
-    public let timeZone: TimeZone
+    public let timeZone: String
     public let currency: String
     public let matchScore: Float
 
@@ -39,17 +39,11 @@ public struct Symbol: Codable, Equatable {
         marketOpen = try container.decode(String.self, forKey: .marketOpen)
         marketClose = try container.decode(String.self, forKey: .marketClose)
         currency = try container.decode(String.self, forKey: .currency)
-        self.matchScore = try container.decodeUSFloat(forKey: .matchScore)
-
-        // Handling TimeZone
-        let timeZoneString = try container.decode(String.self, forKey: .timeZone)
-        guard let timeZone = TimeZone(identifier: timeZoneString) else {
-            throw DecodingError.dataCorruptedError(forKey: .timeZone, in: container, debugDescription: "Time zone string is not a valid identifier.")
-        }
-        self.timeZone = timeZone
+        matchScore = try container.decodeUSFloat(forKey: .matchScore)
+        timeZone = try container.decode(String.self, forKey: .timeZone)
     }
     
-    init(symbol: String, name: String, type: String, region: String, marketOpen: String, marketClose: String, timeZone: TimeZone, currency: String, matchScore: Float) {
+    init(symbol: String, name: String, type: String, region: String, marketOpen: String, marketClose: String, timeZone: String, currency: String, matchScore: Float) {
             self.symbol = symbol
             self.name = name
             self.type = type
