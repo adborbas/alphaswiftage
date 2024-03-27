@@ -40,8 +40,8 @@ final class AlphaVantageServiceTests: XCTestCase {
                                                 toCurrencyCode: target,
                                                 toCurrencyName: "Hungarian Forint",
                                                 exchangeRate: Decimal(floatLiteral: 393.5),
-                                                lastRefreshed: Date(timeIntervalSince1970: 1710096503),
-                                                timeZone: TimeZone.gmt,
+                                                lastRefreshed: "2024-03-10 18:48:23",
+                                                timeZone: "UTC",
                                                 bidPrice: Decimal(floatLiteral: 393.49),
                                                 askPrice: Decimal(floatLiteral: 393.51))
         given(response: .currencyExchangeRate, for: "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=\(base)&to_currency=\(target)&apikey=\(apiKey)")
@@ -62,7 +62,7 @@ final class AlphaVantageServiceTests: XCTestCase {
                                     region: "XETRA",
                                     marketOpen: "08:00",
                                     marketClose: "20:00",
-                                    timeZone: TimeZone(secondsFromGMT: 60*60*2)!,
+                                    timeZone: "UTC+02",
                                     currency: "EUR",
                                     matchScore: 0.7273)
         let service = givenService()

@@ -6,12 +6,12 @@ public struct CurrencyExchangeRate: Codable, Equatable {
     public let toCurrencyCode: String
     public let toCurrencyName: String
     public let exchangeRate: Decimal
-    public let lastRefreshed: Date
-    public let timeZone: TimeZone
+    public let lastRefreshed: String
+    public let timeZone: String
     public let bidPrice: Decimal
     public let askPrice: Decimal
     
-    init(fromCurrencyCode: String, fromCurrencyName: String, toCurrencyCode: String, toCurrencyName: String, exchangeRate: Decimal, lastRefreshed: Date, timeZone: TimeZone, bidPrice: Decimal, askPrice: Decimal) {
+    init(fromCurrencyCode: String, fromCurrencyName: String, toCurrencyCode: String, toCurrencyName: String, exchangeRate: Decimal, lastRefreshed: String, timeZone: String, bidPrice: Decimal, askPrice: Decimal) {
         self.fromCurrencyCode = fromCurrencyCode
         self.fromCurrencyName = fromCurrencyName
         self.toCurrencyCode = toCurrencyCode
@@ -44,23 +44,7 @@ public struct CurrencyExchangeRate: Codable, Equatable {
         exchangeRate = try container.decodeUSDecimal(forKey: .exchangeRate)
         bidPrice = try container.decodeUSDecimal(forKey: .bidPrice)
         askPrice = try container.decodeUSDecimal(forKey: .askPrice)
-        
-
-        // Handling TimeZone
-        let timeZoneString = try container.decode(String.self, forKey: .timeZone)
-        guard let timeZone = TimeZone(identifier: timeZoneString) else {
-            throw DecodingError.dataCorruptedError(forKey: .timeZone, in: container, debugDescription: "Time zone string is not a valid identifier.")
-        }
-        self.timeZone = timeZone
-        
-        // Custom decoding for the Date
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = timeZone
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let dateString = try container.decode(String.self, forKey: .lastRefreshed)
-        guard let date = dateFormatter.date(from: dateString) else {
-            throw DecodingError.dataCorruptedError(forKey: .lastRefreshed, in: container, debugDescription: "Date string does not match format expected by formatter.")
-        }
-        lastRefreshed = date
+        timeZone = try container.decode(String.self, forKey: .timeZone)
+        lastRefreshed = try container.decode(String.self, forKey: .lastRefreshed)
     }
 }
