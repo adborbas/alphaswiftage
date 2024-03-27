@@ -14,7 +14,9 @@ extension DataRequest {
         do {
             return try await self.serializingResponse(using: AlphaVantageResponseSerializer<T>()).value
         } catch {
-            fatalError("Error should not be thrown from AlphaVantageResponseSerializer but got: \(error.localizedDescription)")
+            let message = "Error should not be thrown from AlphaVantageResponseSerializer but got: \(error.localizedDescription)"
+            logger.critical("\(message)")
+            fatalError(message)
         }
     }
     

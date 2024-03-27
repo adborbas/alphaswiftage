@@ -16,19 +16,25 @@ struct AlphaVantageResponseSerializer<T: Decodable>: ResponseSerializer {
             let result = try baseSerializer.serialize(request: request, response: response, data: data, error: error)
             return .success(result)
         } catch {
-            if let data = data {
-                do {
-                    let error = try JSONDecoder().decode(AlphaVantageAPIError.self, from: data)
-                    return .failure(.apiError(error))
-                } catch {
-                    if let response = String(data: data, encoding: .utf8) {
-                        return .failure(.unexpectedResponse(response))
-                    }
-                    return .failure(.unknown(error))
-                }
+            guard let data = data else {
+                logger.error("Failed to serialise request and returned data is nil. \(error.localizedDescription)")
+                return .failure(.unknown(error))
             }
             
-            return .failure(.unknown(error))
+            logger.debug("Failed to serialise request: \(error.localizedDescription).")
+            do {
+                let error = try JSONDecoder().decode(AlphaVantageAPIError.self, from: data)
+                logger.info("API Error: \(error.localizedDescription)")
+                return .failure(.apiError(error))
+            } catch {
+                guard let response = String(data: data, encoding: .utf8) else {
+                    logger.error("Unexpected response not parsable to String.")
+                    return .failure(.unknown(error))
+                }
+                
+                logger.error("Unexpected response: \(response).")
+                return .failure(.unexpectedResponse(response))
+            }
         }
     }
 }

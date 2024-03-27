@@ -9,7 +9,7 @@ import Foundation
 import Logging
 import Alamofire
 
-private var logger: Logger = Logger(label: "com.adborbas.alphaswiftage")
+var logger: Logger = Logger(label: "com.adborbas.alphaswiftage")
 
 class SwiftLogger: EventMonitor {
     let queue = DispatchQueue(label: "com.adborbas.alphaswiftage.swiftlogger")
