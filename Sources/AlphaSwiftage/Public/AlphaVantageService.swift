@@ -33,4 +33,10 @@ public class AlphaVantageService {
         return await session.request(request)
             .serializingAlphaVantageWrappedResponse(SearchSymbolResponse.self) { $0.matches }
     }
+    
+    public func dailyAdjustedTimeSeries(for symbol: String) async -> Result<[String: EquityDailyData], AlphaVantageError> {
+        let request = AlphaVantageAPI.dailyAdjustedTimeSeries(symbol: symbol, apiKey: apiKey)
+        return await session.request(request)
+            .serializingAlphaVantageWrappedResponse(TimeSeriesResponse.self) { $0.dailyTimeSeries }
+    }
 }

@@ -7,6 +7,7 @@ enum AlphaVantageAPI: URLConvertible {
     case globalQuote(symbol: String, apiKey: String)
     case currencyExchangeRate(from: String, to: String, apiKey: String)
     case symbolSearch(keywords: String, apiKey: String)
+    case dailyAdjustedTimeSeries(symbol: String, apiKey: String)
 
        func asURL() throws -> URL {
            let url = try AlphaVantageAPI.baseURLString.asURL()
@@ -24,6 +25,10 @@ enum AlphaVantageAPI: URLConvertible {
            case .symbolSearch(let keywords, let apiKey):
                return url.appending("function", value: "SYMBOL_SEARCH")
                    .appending("keywords", value: keywords)
+                   .appending("apikey", value: apiKey)
+           case .dailyAdjustedTimeSeries(let symbol, let apiKey):
+               return url.appending("function", value: "TIME_SERIES_DAILY_ADJUSTED")
+                   .appending("symbol", value: symbol)
                    .appending("apikey", value: apiKey)
            }
        }
