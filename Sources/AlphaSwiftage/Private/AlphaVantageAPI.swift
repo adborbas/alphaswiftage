@@ -9,6 +9,15 @@ enum AlphaVantageAPI: URLConvertible {
     case symbolSearch(keywords: String, apiKey: String)
     case dailyAdjustedTimeSeries(symbol: String, apiKey: String)
     
+    private var functionName: String {
+        switch self {
+        case .globalQuote: "GLOBAL_QUOTE"
+        case .currencyExchangeRate: "CURRENCY_EXCHANGE_RATE"
+        case .symbolSearch: "SYMBOL_SEARCH"
+        case .dailyAdjustedTimeSeries: "TIME_SERIES_DAILY_ADJUSTED"
+        }
+    }
+    
     fileprivate enum Parameter: String {
         case symbol
         case apiKey = "apikey"
@@ -23,23 +32,23 @@ enum AlphaVantageAPI: URLConvertible {
         
         switch self {
         case .globalQuote(let symbol, let apiKey):
-            return url.appendingParameter(.function, value: "GLOBAL_QUOTE")
+            return url.appendingParameter(.function, value: functionName)
                 .appendingParameter(.symbol, value: symbol)
                 .appendingParameter(.apiKey, value: apiKey)
             
         case .currencyExchangeRate(let base, let target, let apiKey):
-            return url.appendingParameter(.function, value: "CURRENCY_EXCHANGE_RATE")
+            return url.appendingParameter(.function, value: functionName)
                 .appendingParameter(.fromCurrency, value: base)
                 .appendingParameter(.toCurrency, value: target)
                 .appendingParameter(.apiKey, value: apiKey)
             
         case .symbolSearch(let keywords, let apiKey):
-            return url.appendingParameter(.function, value: "SYMBOL_SEARCH")
+            return url.appendingParameter(.function, value: functionName)
                 .appendingParameter(.keywords, value: keywords)
                 .appendingParameter(.apiKey, value: apiKey)
             
         case .dailyAdjustedTimeSeries(let symbol, let apiKey):
-            return url.appendingParameter(.function, value: "TIME_SERIES_DAILY_ADJUSTED")
+            return url.appendingParameter(.function, value: functionName)
                 .appendingParameter(.symbol, value: symbol)
                 .appendingParameter(.apiKey, value: apiKey)
         }

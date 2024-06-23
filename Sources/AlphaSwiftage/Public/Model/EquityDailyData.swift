@@ -39,7 +39,7 @@ public struct EquityDailyData: Codable, Equatable {
         low = try container.decodeUSDecimal(forKey: .low)
         close = try container.decodeUSDecimal(forKey: .close)
         adjustedClose = try container.decodeUSDecimal(forKey: .adjustedClose)
-        volume = try try container.decodeUSInt(forKey: .volume)
+        volume = try container.decodeUSInt(forKey: .volume)
         dividendAmount = try container.decodeUSDecimal(forKey: .dividendAmount)
         splitCoefficient = try container.decodeUSDecimal(forKey: .splitCoefficient)
     }
