@@ -26,6 +26,7 @@ let symbols = try await service.symbolSearch(keywords: "VWCE")
 - [Symbol Search](https://www.alphavantage.co/documentation/#symbolsearch)
 - [Quote](https://www.alphavantage.co/documentation/#latestprice)
 - [Exchange Rates](https://www.alphavantage.co/documentation/#currency-exchange)
+- [Time Series - Daily Adjusted](https://www.alphavantage.co/documentation/#dailyadj)
 
 ## API Key
 
