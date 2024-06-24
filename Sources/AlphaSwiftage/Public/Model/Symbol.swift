@@ -1,10 +1,3 @@
-//
-//  Symbol.swift
-//
-//
-//  Created by Adam Borbas on 16/03/2024.
-//
-
 import Foundation
 
 public struct Symbol: Codable, Equatable {

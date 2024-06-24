@@ -89,6 +89,24 @@ final class AlphaVantageServiceTests: XCTestCase {
         await assertError(result, expectedError: expectedError)
     }
     
+    func testDailyTimeSeries() async {
+        // Given
+        let expectedResult: [String: EquityDailyData] = [
+            "2024-06-21" : EquityDailyData(open: 173.97, high: 174.96, low: 171.4, close: 172.46, adjustedClose: 172.46, volume: 10182025, dividendAmount: 0, splitCoefficient: 1.0),
+            "2024-06-20": EquityDailyData(open: 174.08, high: 174.28, low: 171.22, close: 173.92, adjustedClose: 173.92, volume: 4723078, dividendAmount: 0, splitCoefficient: 1.0)
+        ]
+        
+        let symbol = "MSFT"
+        let service = givenService()
+        given(response: .dailyTimeSeriesSuccess, for: "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=\(symbol)&apikey=\(apiKey)")
+        
+        // When
+        let result = await service.dailyAdjustedTimeSeries(for: symbol)
+        
+        // Then
+        assertSuccess(result, expectedValue: expectedResult)
+    }
+    
     func test_unexpectedResponse() async {
         // Given
         let symbol = "vwce"

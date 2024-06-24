@@ -13,6 +13,7 @@ enum MockResponse: String {
     case currencyExchangeRate = "mockCurrencyExchangeRateeResponse"
     case symbolSearchSuccess = "mockSymbolSearchSuccess"
     case symbolSearchFailure = "mockSymbolSearchFailure"
+    case dailyTimeSeriesSuccess = "mockDailyTimeSeriesSuccess"
     case unexpectedResponse = "mockUnexpectedResponse"
     
     var resourcePath: URL {
