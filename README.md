@@ -1,6 +1,6 @@
 # AlphaSwiftage
 
-Lightweight Swift library to access the [Alpha Vantage API](https://www.alphavantage.co/documentation/).
+Lightweight Swift library to access the [Alpha Vantage API](https://www.alphavantage.co/documentation/). The library does also support the [Alpha Vantage API exposed on RapidAPI](https://rapidapi.com/alphavantage/api/alpha-vantage).
 
 ## Installation
 
@@ -14,10 +14,21 @@ dependencies: [
 
 ## Usage
 
+Using the native Alpha Vantage API:
+
 ```swift
 import AlphaSwiftage
 
 let service = AlphaVantageService(apiKey: "{YOUR_API_KEY}")
+let symbols = try await service.symbolSearch(keywords: "VWCE")
+```
+
+Alpha Vantage API exposed on RapidAPI:
+
+```swift
+import AlphaSwiftage
+
+let service = AlphaVantageService(serviceType: .rapidAPI(apiKey: "{YOUR_API_KEY}"))
 let symbols = try await service.symbolSearch(keywords: "VWCE")
 ```
 
@@ -27,7 +38,3 @@ let symbols = try await service.symbolSearch(keywords: "VWCE")
 - [Quote](https://www.alphavantage.co/documentation/#latestprice)
 - [Exchange Rates](https://www.alphavantage.co/documentation/#currency-exchange)
 - [Time Series - Daily Adjusted](https://www.alphavantage.co/documentation/#dailyadj)
-
-## API Key
-
-You can get a free API Key [here](https://www.alphavantage.co/support/#api-key).
