@@ -14,5 +14,6 @@ enum AlphaVantageAPI {
         case fromCurrency = "from_currency"
         case toCurrency = "to_currency"
         case keywords
+        case outputSize = "outputsize"
     }
 }

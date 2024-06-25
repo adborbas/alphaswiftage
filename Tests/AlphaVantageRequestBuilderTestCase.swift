@@ -59,13 +59,14 @@ class AlphaVantageRequestBuilderTestCase: XCTestCase {
         // Given
         let parameters: [String: Any] = [
             "function": "TIME_SERIES_DAILY_ADJUSTED",
-            "symbol": "APPL"
+            "symbol": "APPL",
+            "outputsize": "full"
         ]
         let expectedRequest = givenRequest(with: parameters)
         let requestBuilder = givenAlphaVantageRequestBuilder()
         
         // When
-        let actualRequest = requestBuilder.requestForDailyAdjustedTimeSeries(symbol: "APPL")
+        let actualRequest = requestBuilder.requestForDailyAdjustedTimeSeries(symbol: "APPL", outputSize: .full)
         
         // Then
         XCTAssertEqual(expectedRequest, actualRequest)
