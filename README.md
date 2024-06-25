@@ -8,7 +8,7 @@ AlphaSwiftage is distributed using the [Swift Package Manager](https://www.swift
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/adborbas/alphaswiftage.git", from: "0.1.0")
+    .package(url: "https://github.com/adborbas/alphaswiftage.git", from: "0.5.0")
 ]
 ```
 
