@@ -6,6 +6,7 @@ import Mocker
 
 final class AlphaVantageServiceTests: XCTestCase {
     private let apiKey = "whatever"
+    private lazy var mockAPIHost = MockAPIHost()
     
     func testQuote() async {
         // Given
@@ -21,7 +22,7 @@ final class AlphaVantageServiceTests: XCTestCase {
                                   previousClose: Decimal(115.1),
                                   change: Decimal(0.02),
                                   changePercent: "0.0174%")
-        given(response: .quote, for: "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=\(symbol)&apikey=\(apiKey)")
+        given(response: .quote, for: "\(mockAPIHost.baseURL.absoluteString)?function=GLOBAL_QUOTE&symbol=\(symbol)")
         
         // When
         let result = await service.quote(for: symbol)
@@ -44,7 +45,7 @@ final class AlphaVantageServiceTests: XCTestCase {
                                                 timeZone: "UTC",
                                                 bidPrice: Decimal(floatLiteral: 393.49),
                                                 askPrice: Decimal(floatLiteral: 393.51))
-        given(response: .currencyExchangeRate, for: "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=\(base)&to_currency=\(target)&apikey=\(apiKey)")
+        given(response: .currencyExchangeRate, for: "\(mockAPIHost.absoluteBaseURL)?from_currency=\(base)&function=CURRENCY_EXCHANGE_RATE&to_currency=\(target)")
         
         // When
         let result = await service.currencyExchangeRate(from: base, to: target)
@@ -66,7 +67,7 @@ final class AlphaVantageServiceTests: XCTestCase {
                                     currency: "EUR",
                                     matchScore: 0.7273)
         let service = givenService()
-        given(response: .symbolSearchSuccess, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
+        given(response: .symbolSearchSuccess, for: "\(mockAPIHost.absoluteBaseURL)?function=SYMBOL_SEARCH&keywords=\(keyword)")
         
         // When
         let result = await service.symbolSearch(keywords: keyword)
@@ -80,7 +81,7 @@ final class AlphaVantageServiceTests: XCTestCase {
         let expectedError: AlphaVantageError = .apiError(AlphaVantageAPIError(message: "Invalid API call."))
         let keyword = "whatever"
         let service = givenService()
-        given(response: .symbolSearchFailure, for: "https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=\(keyword)&apikey=\(apiKey)")
+        given(response: .symbolSearchFailure, for: "\(mockAPIHost.absoluteBaseURL)?function=SYMBOL_SEARCH&keywords=\(keyword)")
         
         // When
         let result = await service.symbolSearch(keywords: keyword)
@@ -98,7 +99,7 @@ final class AlphaVantageServiceTests: XCTestCase {
         
         let symbol = "MSFT"
         let service = givenService()
-        given(response: .dailyTimeSeriesSuccess, for: "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=\(symbol)&apikey=\(apiKey)")
+        given(response: .dailyTimeSeriesSuccess, for: "\(mockAPIHost.absoluteBaseURL)?function=TIME_SERIES_DAILY_ADJUSTED&symbol=\(symbol)")
         
         // When
         let result = await service.dailyAdjustedTimeSeries(for: symbol)
@@ -111,7 +112,7 @@ final class AlphaVantageServiceTests: XCTestCase {
         // Given
         let symbol = "vwce"
         let service = givenService()
-        given(response: .unexpectedResponse, for: "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=\(symbol)&apikey=\(apiKey)")
+        given(response: .unexpectedResponse, for: "\(mockAPIHost.absoluteBaseURL)?function=GLOBAL_QUOTE&symbol=\(symbol)")
         
         // When
         let result = await service.quote(for: symbol)
@@ -129,7 +130,9 @@ final class AlphaVantageServiceTests: XCTestCase {
         configuration.protocolClasses = [MockingURLProtocol.self]
         let sessionManager = Alamofire.Session(configuration: configuration)
         
-        return AlphaVantageService(apiKey: "whatever", session: sessionManager)
+        let requestBuilder = AlphaVantageRequestBuilder(host: mockAPIHost)
+        
+        return AlphaVantageService(requestBuilder: requestBuilder, session: sessionManager)
     }
     
     private func assertSuccess<T>(_ result: Result<T, AlphaVantageError>, expectedValue: T) where T: Equatable {
@@ -163,5 +166,15 @@ extension AlphaVantageError: Equatable {
         default:
             return false
         }
+    }
+}
+
+fileprivate class MockAPIHost: APIHost {
+    let baseURL = URL(string: "http://test.com")!
+    let headers = HTTPHeaders()
+    let baseParameters = Parameters()
+    
+    var absoluteBaseURL: String {
+        return baseURL.absoluteString
     }
 }
