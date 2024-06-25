@@ -38,10 +38,14 @@ public class AlphaVantageService {
             .serializingAlphaVantageWrappedResponse(SearchSymbolResponse.self) { $0.matches }
     }
     
-    public func dailyAdjustedTimeSeries(for symbol: String) async -> Result<[String: EquityDailyData], AlphaVantageError> {
-        let request = requestBuilder.requestForDailyAdjustedTimeSeries(symbol: symbol)
+    public func dailyAdjustedTimeSeries(for symbol: String, outputSize: OutputSize) async -> Result<[String: EquityDailyData], AlphaVantageError> {
+        let request = requestBuilder.requestForDailyAdjustedTimeSeries(symbol: symbol, outputSize: outputSize)
         return await session.request(request)
             .serializingAlphaVantageWrappedResponse(TimeSeriesResponse.self) { $0.dailyTimeSeries }
+    }
+    
+    public func dailyAdjustedTimeSeries(for symbol: String) async -> Result<[String: EquityDailyData], AlphaVantageError> {
+        await dailyAdjustedTimeSeries(for: symbol, outputSize: .compact)
     }
 }
 

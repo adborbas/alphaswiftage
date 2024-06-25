@@ -30,10 +30,11 @@ class AlphaVantageRequestBuilder {
         return request(for: parameters)
     }
     
-    func requestForDailyAdjustedTimeSeries(symbol: String) -> AlphaVantageRequest {
+    func requestForDailyAdjustedTimeSeries(symbol: String, outputSize: OutputSize) -> AlphaVantageRequest {
         var parameters = Parameters()
         parameters.appendFunction(.dailyAdjustedTimeSeries)
         parameters.appendParameter(.symbol, value: symbol)
+        parameters.appendParameter(.outputSize, value: outputSize.parameterValue)
         return request(for: parameters)
     }
     
@@ -52,6 +53,7 @@ class AlphaVantageRequestBuilder {
         case fromCurrency = "from_currency"
         case toCurrency = "to_currency"
         case keywords
+        case outputSize = "outputsize"
     }
 }
 
@@ -67,6 +69,15 @@ fileprivate extension Parameters {
     mutating func appendParameters(_ parameters: Parameters) {
         parameters.forEach { (key: String, value: Any) in
             self[key] = value
+        }
+    }
+}
+
+fileprivate extension OutputSize {
+    var parameterValue: String {
+        switch self {
+        case .compact: return "compact"
+        case .full: return "full"
         }
     }
 }

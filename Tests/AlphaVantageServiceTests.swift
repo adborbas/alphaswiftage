@@ -99,7 +99,7 @@ final class AlphaVantageServiceTests: XCTestCase {
         
         let symbol = "MSFT"
         let service = givenService()
-        given(response: .dailyTimeSeriesSuccess, for: "\(mockAPIHost.absoluteBaseURL)?function=TIME_SERIES_DAILY_ADJUSTED&symbol=\(symbol)")
+        given(response: .dailyTimeSeriesSuccess, for: "\(mockAPIHost.absoluteBaseURL)?function=TIME_SERIES_DAILY_ADJUSTED&outputsize=compact&symbol=\(symbol)")
         
         // When
         let result = await service.dailyAdjustedTimeSeries(for: symbol)
